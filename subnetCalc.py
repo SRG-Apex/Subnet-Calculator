@@ -12,30 +12,44 @@ IP = IP_Array[0] + "." + IP_Array[1] + "." + IP_Array[2] + "."
 S = input("Enter Subnets (Leave Blank if N/A): ")
 H = input("Enter Number of Usable Hosts (Leave Blank if N/A): ")
 
-if CLASS == "C":
+ClassTable = {
+    "C" : 3,
+    "B" : 2,
+    "A" : 1
+}
+def nCalc(CLASS, S, H):
     if S:
-        S = int(S)
-        n = math.ceil(math.log2(S))
-        S = 2**n
-        H = 2**(8-n)
-        print(n)
+        n = math.ceil(math.log2(S)) + 8*ClassTable[CLASS]
     elif H:
-        H = int(H)+2
-        n = 8-(math.ceil(math.log2(H)))
-        S = 2**n
-        H = 2**(8-n)
-    subnetsum = 0
-    for i in range(n):
-        subnetsum += (2**(7-i))
+        n = 32-(math.ceil(math.log2(H))) + 8*ClassTable[CLASS]
+    return n 
 
-    input()
-elif CLASS == "B":
-    pass
-elif CLASS == "A":
-    pass
-else:
-    pass
-subnetmask = f"255.255.255.{subnetsum}"
+n = nCalc(CLASS, S, H)
+H = 2**(32 - n - 8*ClassTable[CLASS])
+S = 2**(n - 8*ClassTable[CLASS])
+
+activeOctet = math.ceil(n/4)
+
+if CLASS == "B":
+    subnet3 = 255
+    if activeOctet == 4:
+        subnet2 = 255
+        subnet1 = 0
+        for i in range(n):
+            subnet1 += (2**(7-i))
+    else: 
+        subnet2 = 0
+        for i in range(n-16):
+            subnet2 += (2**(7-i))
+        subnet1 = 0 
+if CLASS == "C":
+    subnet3 = 255
+    subnet2 = 255
+    subnet1 = 0
+    for i in range(n):
+        subnet1 += (2**(7-i))
+
+subnetmask = f"255.{subnet3}.{subnet2}.{subnet1}"
 system('cls' if name == 'nt' else 'clear')
 print("--- Network Statistics: ---\n")
 
