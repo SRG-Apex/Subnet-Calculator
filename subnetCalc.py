@@ -32,6 +32,30 @@ H = 2**(32 - n)
 S = 2**(n - 8*ClassTable[CLASS])
 
 activeOctet = math.ceil(n/8)
+if CLASS == "A":
+    subnet3 = 0
+    if activeOctet == 4:
+        subnet3 = 255
+        subnet2 = 255
+        subnet1 = 0
+        print(n)
+        for i in range(n-24):
+            print(i)
+            subnet1 += (2**(7-i))
+            print(subnet1)
+    elif activeOctet == 3:
+        subnet3 = 255
+        subnet2 = 0
+        for i in range(n-16):
+            subnet2 += (2**(7-i))
+        subnet1 = 0 
+    else: 
+        subnet3 = 0
+        for i in range(n-8):
+            subnet3 += (2**(7-i))
+        subnet2 = 0
+        subnet1 = 0
+        
 
 if CLASS == "B":
     subnet3 = 255
@@ -57,7 +81,7 @@ if CLASS == "C":
         subnet1 += (2**(7-i))
 
 subnetmask = f"255.{subnet3}.{subnet2}.{subnet1}"
-# system('cls' if name == 'nt' else 'clear')
+system('cls' if name == 'nt' else 'clear')
 print("--- Network Statistics: ---\n")
 print(f"Class: {CLASS}")
 print(f"Number of Subnets (S): {S}")
@@ -67,8 +91,8 @@ print(f"Internal N: {n}")
 print(f"Bits Borrowed (N): {n-(8*ClassTable[CLASS])}")
 print(f"Subnet Mask: {subnetmask}")
 
-if input("See Ranges? (y/N):") == "y":
-    print("Range(s):")
-    for subnet in range(S):
-        suffix = subnet*H
-        print(IP + str(suffix) + "-" + IP + str(suffix+H-1))
+# if input("See Ranges? (y/N):") == "y":
+#     print("Range(s):")
+#     for subnet in range(S):
+#         suffix = subnet*H
+#         print(IP + str(suffix) + "-" + IP + str(suffix+H-1))
