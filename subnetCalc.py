@@ -93,6 +93,44 @@ print(f"Subnet Mask: {subnetmask}")
 
 # if input("See Ranges? (y/N):") == "y":
 #     print("Range(s):")
+#     hostsPer = 2**(8-n%8)
 #     for subnet in range(S):
-#         suffix = subnet*H
-#         print(IP + str(suffix) + "-" + IP + str(suffix+H-1))
+#         if activeOctet == 4:
+#             suffix = subnet*H
+#             print(f"{IP_Array[0]}.{IP_Array[1]}.{IP_Array[2]}.{suffix} to {IP_Array[0]}.{IP_Array[1]}.{IP_Array[2]}.{suffix+(H-1)}") 
+
+#         if activeOctet == 3:
+#             suffix = subnet*H
+#             print(f"{IP_Array[0]}.{IP_Array[1]}.{IP_Array[2]}.{suffix} to {IP_Array[0]}.{IP_Array[1]}.{IP_Array[2]}.{suffix+(H-1)}") 
+
+#         print(f"")
+#         print (f"")
+
+def suffixCalc(subnet: int, hosts: int) -> tuple[int, int, int]:
+    suffix = subnet*hosts
+    suffix2 = suffix//256
+    suffix3 = suffix2//256 
+    suffix2 -= suffix3*256
+    suffix -= suffix3*256*256 + suffix2*256
+    return suffix3, suffix2, suffix
+
+if input("See Ranges? (y/N):") == "y":
+    print("Range(s):")
+    file = open("out.txt", "wt")
+    for subnet in range(S):
+        suffix3initial, suffix2initial, suffixinitial = suffixCalc(subnet, H)
+        suffix3final, suffix2final, suffixfinal = suffixCalc(subnet+1, H)
+        if suffix2final == 0:
+            suffix3final -= 1 
+        suffix2final -= 1
+        
+        if suffix2final < 0:
+            suffix2final = 255
+        suffixfinal -= 1
+        if suffixfinal < 0:
+            suffixfinal = 255
+        
+        out = f"Subnet: #{subnet+1} \n{IP_Array[0]}.{suffix3initial}.{suffix2initial}.{suffixinitial} to {IP_Array[0]}.{suffix3final}.{suffix2final}.{suffixfinal}\n"     
+        file.write(out)
+        print(out)
+    file.close()    
